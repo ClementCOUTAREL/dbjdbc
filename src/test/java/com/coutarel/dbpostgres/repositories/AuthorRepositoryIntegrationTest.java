@@ -72,4 +72,19 @@ public class AuthorRepositoryIntegrationTest {
     assertFalse(result.isPresent());
   }
 
+  @Test
+  public void testThatGetAuthorsWithAgeLessThan(){
+    Author authorA = TestDataUtil.createTestAuthorA();
+    underTest.save(authorA);
+    Author authorB = TestDataUtil.createTestAuthorB();
+    underTest.save(authorB);
+    Author authorC = TestDataUtil.createTestAuthorC();
+    underTest.save(authorC);
+
+    Iterable<Author> expected = Arrays.asList(authorB, authorC);
+    Iterable<Author> result = underTest.findByAgeLessThan(61);
+    assertEquals(expected, result);
+
+  }
+
 }
