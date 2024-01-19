@@ -4,9 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -40,48 +38,47 @@ public class BookRepositoryIntegrationTests {
   }
 
   // @Test
-  // public void testThatMultipleBookCanBeCreatedAndRecalled() {
-  //   Author author = TestDataUtil.createTestAuthorA();
-  //   authorDao.create(author);
+  public void testThatMultipleBookCanBeCreatedAndRecalled() {
+    Author author = TestDataUtil.createTestAuthorA();
 
-  //   Book bookA = TestDataUtil.createTestBookA();
-  //   underTest.create(bookA);
-  //   Book bookB = TestDataUtil.createTestBookB();
-  //   underTest.create(bookB);
-  //   Book bookC = TestDataUtil.createTestBookC();
-  //   underTest.create(bookC);
+    Book bookA = TestDataUtil.createTestBookA(author);
+    underTest.save(bookA);
+    Book bookB = TestDataUtil.createTestBookB(author);
+    underTest.save(bookB);
+    Book bookC = TestDataUtil.createTestBookC(author);
+    underTest.save(bookC);
 
-  //   List<Book> expected = new ArrayList<Book>(Arrays.asList(bookA,bookB,bookC));
+    Iterable<Book> expected = Arrays.asList(bookA,bookB,bookC);
 
-  //   List<Book> result = underTest.findMany();
+    Iterable<Book> result = underTest.findAll();
 
-  //   assertEquals(expected,result);
+    assertEquals(expected,result);
 
-  // }
+  }
 
-  // @Test
-  // public void testThatUpdateWorks(){
-  //   Author author = TestDataUtil.createTestAuthorA();
-  //   authorDao.create(author);
-  //   Book book = TestDataUtil.createTestBookA();
-  //   underTest.create(book);
-  //   book.setTitle("UPDATED");
-  //   underTest.update(book.getIsbn(),book);
+  @Test
+  public void testThatUpdateWorks(){
+    Author author = TestDataUtil.createTestAuthorA();
+    
+    Book book = TestDataUtil.createTestBookA(author);
+    underTest.save(book);
+    book.setTitle("UPDATED");
+    underTest.save(book);
 
-  //   Optional<Book> result = underTest.find(book.getIsbn());
-  //   assertEquals(book, result.get());
-  // }
+    Optional<Book> result = underTest.findById(book.getIsbn());
+    assertEquals(book, result.get());
+  }
 
-  // @Test
-  // public void testThatABookCanBeDeleted(){
-  //   Author author = TestDataUtil.createTestAuthorA();
-  //   authorDao.create(author);
-  //   Book book = TestDataUtil.createTestBookA();
-  //   underTest.create(book);
-  //   underTest.delete(book.getIsbn());
+  @Test
+  public void testThatABookCanBeDeleted(){
+    Author author = TestDataUtil.createTestAuthorA();
+    
+    Book book = TestDataUtil.createTestBookA(author);
+    underTest.save(book);
+    underTest.deleteById(book.getIsbn());
 
-  //   Optional<Book> result = underTest.find(book.getIsbn());
-  //   assertFalse(result.isPresent());
-  // }
+    Optional<Book> result = underTest.findById(book.getIsbn());
+    assertFalse(result.isPresent());
+  }
 
 }
