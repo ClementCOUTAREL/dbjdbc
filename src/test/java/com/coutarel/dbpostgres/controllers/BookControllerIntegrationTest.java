@@ -12,9 +12,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.coutarel.dbpostgres.TestDataUtil;
 import com.coutarel.dbpostgres.domain.dto.BookDto;
-import com.coutarel.dbpostgres.domain.entities.AuthorEntity;
 import com.coutarel.dbpostgres.domain.entities.BookEntity;
-import com.coutarel.dbpostgres.services.AuthorService;
 import com.coutarel.dbpostgres.services.BookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

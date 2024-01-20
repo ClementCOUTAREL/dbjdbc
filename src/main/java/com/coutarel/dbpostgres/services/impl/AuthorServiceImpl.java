@@ -7,6 +7,7 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.stereotype.Service;
 
+import com.coutarel.dbpostgres.domain.dto.AuthorDto;
 import com.coutarel.dbpostgres.domain.entities.AuthorEntity;
 import com.coutarel.dbpostgres.repositories.AuthorRepository;
 import com.coutarel.dbpostgres.services.AuthorService;
@@ -21,7 +22,7 @@ public class AuthorServiceImpl implements AuthorService {
   }
 
   @Override
-  public AuthorEntity createAuthor(AuthorEntity authorEntity){
+  public AuthorEntity save(AuthorEntity authorEntity){
     return authorRepo.save(authorEntity);
   }
 
@@ -34,4 +35,10 @@ public class AuthorServiceImpl implements AuthorService {
   public Optional<AuthorEntity> findById(Long id){
     return authorRepo.findById(id);
   }
+
+  @Override
+  public boolean isExists(Long id) {
+    return authorRepo.existsById(id);
+  }
+
 }

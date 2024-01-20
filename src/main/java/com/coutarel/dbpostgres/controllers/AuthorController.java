@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 @RestController
@@ -34,7 +36,7 @@ public class AuthorController {
   @PostMapping(path = "/authors")
   public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorDto author) {
     AuthorEntity authorEntity = authorMapper.mapFrom(author);
-    AuthorEntity savedAuthorEntity = authorService.createAuthor(authorEntity);
+    AuthorEntity savedAuthorEntity = authorService.save(authorEntity);
     return new ResponseEntity<>(authorMapper.mapTo(savedAuthorEntity), HttpStatus.CREATED);
   }
 
@@ -53,7 +55,17 @@ public class AuthorController {
      return authors.stream().map(authorMapper::mapTo).collect(Collectors.toList());
   }
 
-  
+  @PutMapping(path = "authors/{id}")
+  public ResponseEntity<AuthorDto> fullUpdateAuthor(@PathVariable("id") Long id, @RequestBody AuthorDto authorDto) {
+    if(!authorService.isExists(id)){
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }  
+
+    authorDto.setId(id);
+    AuthorEntity authorEntity = authorMapper.mapFrom(authorDto);
+    AuthorEntity savedAuthorEntity = authorService.save(authorEntity);
+    return new ResponseEntity<>(authorMapper.mapTo(savedAuthorEntity),HttpStatus.OK);
+  }
   
 
 }
