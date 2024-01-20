@@ -1,5 +1,9 @@
 package com.coutarel.dbpostgres.services.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import org.springframework.stereotype.Service;
 
 import com.coutarel.dbpostgres.domain.entities.AuthorEntity;
@@ -20,4 +24,8 @@ public class AuthorServiceImpl implements AuthorService {
     return authorRepo.save(authorEntity);
   }
 
+  @Override
+  public List<AuthorEntity> findAll(){
+    return StreamSupport.stream(authorRepo.findAll().spliterator(),false).collect(Collectors.toList());
+  }
 }

@@ -1,5 +1,9 @@
 package com.coutarel.dbpostgres.services.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import org.springframework.stereotype.Service;
 
 import com.coutarel.dbpostgres.domain.entities.BookEntity;
@@ -21,4 +25,8 @@ public class BookServiceImpl implements BookService {
     return bookRepo.save(book);
   }
 
+  @Override
+  public List<BookEntity> findAll(){
+    return StreamSupport.stream(bookRepo.findAll().spliterator(), false).collect(Collectors.toList()) ;
+  }
 }

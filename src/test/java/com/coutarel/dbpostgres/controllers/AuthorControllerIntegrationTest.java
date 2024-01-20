@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.coutarel.dbpostgres.TestDataUtil;
 import com.coutarel.dbpostgres.domain.entities.AuthorEntity;
+import com.coutarel.dbpostgres.services.AuthorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -23,10 +24,13 @@ public class AuthorControllerIntegrationTest {
 
   private ObjectMapper objectMapper;
 
+  private AuthorService authorService;
+
   @Autowired
-  public AuthorControllerIntegrationTest(MockMvc mockMvc){
+  public AuthorControllerIntegrationTest(MockMvc mockMvc, AuthorService authorService){
     this.mockMvc = mockMvc;
     this.objectMapper = new ObjectMapper();
+    this.authorService = authorService;
   }
 
   @Test
@@ -60,6 +64,32 @@ public class AuthorControllerIntegrationTest {
           MockMvcResultMatchers.jsonPath("$.name").value(author.getName()))
         .andExpect(
           MockMvcResultMatchers.jsonPath("$.age").value(author.getAge()));
+  }
+
+  @Test
+  public void testThatListAuthorsReturnsHttpStatus200() throws Exception{
+     mockMvc.perform(
+      MockMvcRequestBuilders.get("/authors")
+        .contentType(MediaType.APPLICATION_JSON)
+    ).andExpect(
+      MockMvcResultMatchers.status().isOk()
+    );
+  }
+
+  @Test
+  public void testThatListAuthorsReturnsListOfAuthors() throws Exception {
+    AuthorEntity author = TestDataUtil.createTestAuthorA();
+    authorService.createAuthor(author);
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.get("/authors")
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.[0].id").isNumber())
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.[0].name").value(author.getName()))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.[0].age").value(author.getAge()));
   }
 
 }
