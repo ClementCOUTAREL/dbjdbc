@@ -12,7 +12,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.coutarel.dbpostgres.TestDataUtil;
 import com.coutarel.dbpostgres.domain.dto.BookDto;
+import com.coutarel.dbpostgres.domain.entities.AuthorEntity;
 import com.coutarel.dbpostgres.domain.entities.BookEntity;
+import com.coutarel.dbpostgres.services.AuthorService;
 import com.coutarel.dbpostgres.services.BookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -94,6 +96,47 @@ public class BookControllerIntegrationTest {
             MockMvcResultMatchers.jsonPath("$.[0].title").value(book.getTitle()))
         .andExpect(
             MockMvcResultMatchers.jsonPath("$.[0].author").value(book.getAuthor()));
+  }
+
+  @Test
+  public void thestThatGetBookByIsbnReturns200StatusWhenBookFound() throws Exception{
+    BookEntity book = TestDataUtil.createTestBookA(null);
+    bookService.createBook("L", book);
+
+    mockMvc.perform(
+      MockMvcRequestBuilders.get("/books/L").contentType(MediaType.APPLICATION_JSON)
+    ).andExpect(
+      MockMvcResultMatchers.status().isOk()
+    );
+  }
+
+  @Test
+  public void thestThatGetBookByIsbnReturns404StatusWhenBookNotFound() throws Exception {
+    BookEntity book = TestDataUtil.createTestBookA(null);
+    bookService.createBook("L", book);
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.get("/books/J").contentType(MediaType.APPLICATION_JSON)).andExpect(
+            MockMvcResultMatchers.status().isNotFound());
+  }
+
+  @Test
+  public void testThatGetBookByIsbnReturnsCorrectBook() throws Exception{
+    BookEntity book = TestDataUtil.createTestBookA(null);
+    bookService.createBook("11L",book);
+
+    mockMvc.perform(
+      MockMvcRequestBuilders.get("/books/11L").contentType(MediaType.APPLICATION_JSON)
+    )
+    .andExpect(
+      MockMvcResultMatchers.jsonPath("$.isbn").value(book.getIsbn())
+    )
+    .andExpect(
+      MockMvcResultMatchers.jsonPath("$.title").value(book.getTitle())
+    )
+    .andExpect(
+      MockMvcResultMatchers.jsonPath("$.author").value(book.getAuthor())
+    );
   }
 
 }

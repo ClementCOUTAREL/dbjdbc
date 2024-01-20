@@ -1,6 +1,7 @@
 package com.coutarel.dbpostgres.services.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -27,5 +28,10 @@ public class AuthorServiceImpl implements AuthorService {
   @Override
   public List<AuthorEntity> findAll(){
     return StreamSupport.stream(authorRepo.findAll().spliterator(),false).collect(Collectors.toList());
+  }
+
+  @Override
+  public Optional<AuthorEntity> findById(Long id){
+    return authorRepo.findById(id);
   }
 }

@@ -1,6 +1,7 @@
 package com.coutarel.dbpostgres.services.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -29,4 +30,11 @@ public class BookServiceImpl implements BookService {
   public List<BookEntity> findAll(){
     return StreamSupport.stream(bookRepo.findAll().spliterator(), false).collect(Collectors.toList()) ;
   }
+
+  @Override
+  public Optional<BookEntity> findByIsbn(String isbn) {
+    return bookRepo.findById(isbn);
+  }
+
+  
 }
