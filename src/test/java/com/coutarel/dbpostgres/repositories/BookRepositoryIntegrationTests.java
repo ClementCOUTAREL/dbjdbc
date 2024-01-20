@@ -13,8 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import com.coutarel.dbpostgres.TestDataUtil;
-import com.coutarel.dbpostgres.domain.Author;
-import com.coutarel.dbpostgres.domain.Book;
+import com.coutarel.dbpostgres.domain.entities.AuthorEntity;
+import com.coutarel.dbpostgres.domain.entities.BookEntity;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -29,28 +29,28 @@ public class BookRepositoryIntegrationTests {
 
   @Test
   public void testThatBookCanBeCreatedAndRecalled() {
-    Author author = TestDataUtil.createTestAuthorA();
-    Book book = TestDataUtil.createTestBookA(author);
+    AuthorEntity author = TestDataUtil.createTestAuthorA();
+    BookEntity book = TestDataUtil.createTestBookA(author);
     underTest.save(book);
-    Optional<Book> result = underTest.findById(book.getIsbn());
+    Optional<BookEntity> result = underTest.findById(book.getIsbn());
     assertNotNull(result);
     assertEquals(result.get(), book);
   }
 
   // @Test
   public void testThatMultipleBookCanBeCreatedAndRecalled() {
-    Author author = TestDataUtil.createTestAuthorA();
+    AuthorEntity author = TestDataUtil.createTestAuthorA();
 
-    Book bookA = TestDataUtil.createTestBookA(author);
+    BookEntity bookA = TestDataUtil.createTestBookA(author);
     underTest.save(bookA);
-    Book bookB = TestDataUtil.createTestBookB(author);
+    BookEntity bookB = TestDataUtil.createTestBookB(author);
     underTest.save(bookB);
-    Book bookC = TestDataUtil.createTestBookC(author);
+    BookEntity bookC = TestDataUtil.createTestBookC(author);
     underTest.save(bookC);
 
-    Iterable<Book> expected = Arrays.asList(bookA,bookB,bookC);
+    Iterable<BookEntity> expected = Arrays.asList(bookA,bookB,bookC);
 
-    Iterable<Book> result = underTest.findAll();
+    Iterable<BookEntity> result = underTest.findAll();
 
     assertEquals(expected,result);
 
@@ -58,26 +58,26 @@ public class BookRepositoryIntegrationTests {
 
   @Test
   public void testThatUpdateWorks(){
-    Author author = TestDataUtil.createTestAuthorA();
+    AuthorEntity author = TestDataUtil.createTestAuthorA();
     
-    Book book = TestDataUtil.createTestBookA(author);
+    BookEntity book = TestDataUtil.createTestBookA(author);
     underTest.save(book);
     book.setTitle("UPDATED");
     underTest.save(book);
 
-    Optional<Book> result = underTest.findById(book.getIsbn());
+    Optional<BookEntity> result = underTest.findById(book.getIsbn());
     assertEquals(book, result.get());
   }
 
   @Test
   public void testThatABookCanBeDeleted(){
-    Author author = TestDataUtil.createTestAuthorA();
+    AuthorEntity author = TestDataUtil.createTestAuthorA();
     
-    Book book = TestDataUtil.createTestBookA(author);
+    BookEntity book = TestDataUtil.createTestBookA(author);
     underTest.save(book);
     underTest.deleteById(book.getIsbn());
 
-    Optional<Book> result = underTest.findById(book.getIsbn());
+    Optional<BookEntity> result = underTest.findById(book.getIsbn());
     assertFalse(result.isPresent());
   }
 

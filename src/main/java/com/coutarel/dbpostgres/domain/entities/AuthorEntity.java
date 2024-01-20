@@ -1,4 +1,4 @@
-package com.coutarel.dbpostgres.domain;
+package com.coutarel.dbpostgres.domain.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name="authors")
-public class Author {
+public class AuthorEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "author_id_seq")

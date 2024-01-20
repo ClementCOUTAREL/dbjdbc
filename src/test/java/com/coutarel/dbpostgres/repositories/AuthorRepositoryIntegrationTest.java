@@ -7,14 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.Arrays;
 import java.util.Optional;
 
-import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import com.coutarel.dbpostgres.TestDataUtil;
-import com.coutarel.dbpostgres.domain.Author;
+import com.coutarel.dbpostgres.domain.entities.AuthorEntity;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -29,60 +28,60 @@ public class AuthorRepositoryIntegrationTest {
 
   @Test
   public void testThatAuthorCanBeCreatedAndRecalled(){
-    Author author = TestDataUtil.createTestAuthorA();
+    AuthorEntity author = TestDataUtil.createTestAuthorA();
     underTest.save(author);
-    Optional<Author> result = underTest.findById(author.getId());
+    Optional<AuthorEntity> result = underTest.findById(author.getId());
     assertNotNull(result);
     assertEquals(result.get(), author);
   }
 
   @Test
   public void testThatMultipleAuthorsCanBeCreatedAndCalled(){
-    Author authorA = TestDataUtil.createTestAuthorA();
+    AuthorEntity authorA = TestDataUtil.createTestAuthorA();
     underTest.save(authorA);
-    Author authorB = TestDataUtil.createTestAuthorB();
+    AuthorEntity authorB = TestDataUtil.createTestAuthorB();
     underTest.save(authorB);
-    Author authorC = TestDataUtil.createTestAuthorC();
+    AuthorEntity authorC = TestDataUtil.createTestAuthorC();
     underTest.save(authorC);
 
-    Iterable<Author> expected = Arrays.asList(authorA,authorB, authorC);
+    Iterable<AuthorEntity> expected = Arrays.asList(authorA,authorB, authorC);
 
-    Iterable<Author> result = underTest.findAll();
+    Iterable<AuthorEntity> result = underTest.findAll();
 
     assertEquals(expected, result);;
   }
 
   @Test
   public void testThatAuthorCanBeUpdated(){
-    Author author = TestDataUtil.createTestAuthorA();
+    AuthorEntity author = TestDataUtil.createTestAuthorA();
     underTest.save(author);
     author.setName("UPDATED");
     underTest.save(author);
-    Optional<Author> result = underTest.findById(author.getId());
+    Optional<AuthorEntity> result = underTest.findById(author.getId());
     assertEquals(author, result.get());
   }
 
   @Test
   public void testThatDeleteActuallyDeletesTheAuthor(){
-    Author author = TestDataUtil.createTestAuthorA();
+    AuthorEntity author = TestDataUtil.createTestAuthorA();
     underTest.save(author);
     underTest.deleteById(1L);
 
-    Optional<Author> result = underTest.findById(1L);
+    Optional<AuthorEntity> result = underTest.findById(1L);
     assertFalse(result.isPresent());
   }
 
   @Test
   public void testThatGetAuthorsWithAgeLessThan(){
-    Author authorA = TestDataUtil.createTestAuthorA();
+    AuthorEntity authorA = TestDataUtil.createTestAuthorA();
     underTest.save(authorA);
-    Author authorB = TestDataUtil.createTestAuthorB();
+    AuthorEntity authorB = TestDataUtil.createTestAuthorB();
     underTest.save(authorB);
-    Author authorC = TestDataUtil.createTestAuthorC();
+    AuthorEntity authorC = TestDataUtil.createTestAuthorC();
     underTest.save(authorC);
 
-    Iterable<Author> expected = Arrays.asList(authorB, authorC);
-    Iterable<Author> result = underTest.findByAgeLessThan(61);
+    Iterable<AuthorEntity> expected = Arrays.asList(authorB, authorC);
+    Iterable<AuthorEntity> result = underTest.findByAgeLessThan(61);
     assertEquals(expected, result);
 
   }
@@ -90,15 +89,15 @@ public class AuthorRepositoryIntegrationTest {
   @Test
   public void testThatGetAuthorsWithAgeGreaterThan(){
 
-    Author authorA = TestDataUtil.createTestAuthorA();
+    AuthorEntity authorA = TestDataUtil.createTestAuthorA();
     underTest.save(authorA);
-    Author authorB = TestDataUtil.createTestAuthorB();
+    AuthorEntity authorB = TestDataUtil.createTestAuthorB();
     underTest.save(authorB);
-    Author authorC = TestDataUtil.createTestAuthorC();
+    AuthorEntity authorC = TestDataUtil.createTestAuthorC();
     underTest.save(authorC);
 
-    Iterable<Author> expected = Arrays.asList(authorA, authorC);
-    Iterable<Author> result = underTest.findAuthorsWithAgeGreaterThan(50);
+    Iterable<AuthorEntity> expected = Arrays.asList(authorA, authorC);
+    Iterable<AuthorEntity> result = underTest.findAuthorsWithAgeGreaterThan(50);
     assertEquals(expected, result);
 
   }
