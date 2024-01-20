@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.bind.annotation.PatchMapping;
 
 
 @RestController
@@ -45,6 +44,16 @@ public class BookController {
     }else{
       return new ResponseEntity<>(savedBookDto,HttpStatus.CREATED);
     }
+  }
+
+  @PatchMapping(path = "/books/{isbn}")
+  public ResponseEntity<BookDto> partialUpdateBook(@PathVariable("isbn") String isbn,@RequestBody BookDto bookDto){
+    if(!bookService.isExists(isbn)){
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    BookEntity bookEntity = bookMapper.mapFrom(bookDto);
+    BookEntity updatedBookEntity = bookService.partialUpdate(isbn, bookEntity);
+    return new ResponseEntity<>(bookMapper.mapTo(updatedBookEntity), HttpStatus.OK); 
   }
   
   @GetMapping("/books/{isbn}")

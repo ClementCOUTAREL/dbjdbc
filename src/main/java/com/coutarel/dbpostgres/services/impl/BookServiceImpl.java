@@ -40,5 +40,11 @@ public class BookServiceImpl implements BookService {
   public boolean isExists(String isbn) {
     return bookRepo.existsById(isbn);
   }
+
+  @Override
+  public BookEntity partialUpdate(String isbn, BookEntity bookEntity) {
+    bookEntity.setIsbn(isbn);
+    return bookRepo.save(bookEntity);
+  }
   
 }

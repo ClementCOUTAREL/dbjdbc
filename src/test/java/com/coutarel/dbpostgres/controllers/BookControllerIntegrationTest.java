@@ -1,7 +1,6 @@
 package com.coutarel.dbpostgres.controllers;
 
 import org.junit.jupiter.api.Test;
-import org.postgresql.translation.messages_de;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +14,6 @@ import com.coutarel.dbpostgres.TestDataUtil;
 import com.coutarel.dbpostgres.domain.dto.BookDto;
 import com.coutarel.dbpostgres.domain.entities.BookEntity;
 import com.coutarel.dbpostgres.services.BookService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -172,6 +170,55 @@ public class BookControllerIntegrationTest {
     .andExpect(
       MockMvcResultMatchers.jsonPath("$.author").value(bookDto.getAuthor())
     );
+  }
+
+  @Test
+  public void testThatPartialUpdateBookReturnsStatus200WhenBookExists() throws Exception{
+    BookEntity bookEntity = TestDataUtil.createTestBookA(null);
+    bookService.createUpdatedBook(bookEntity.getIsbn(), bookEntity);
+    BookDto bookDto = TestDataUtil.createTestBookDtoA(null);
+
+    String updatedBook = objectMapper.writeValueAsString(bookDto);
+
+    mockMvc.perform(
+      MockMvcRequestBuilders.patch("/books/" + bookEntity.getIsbn()).contentType(MediaType.APPLICATION_JSON).content(updatedBook)
+    ).andExpect(
+      MockMvcResultMatchers.status().isOk()
+    );
+  }
+
+  @Test
+  public void testThatPartialUpdateBookReturnsStatus404WhenBookDoesNotExist() throws Exception {
+    BookEntity bookEntity = TestDataUtil.createTestBookA(null);
+    BookDto bookDto = TestDataUtil.createTestBookDtoA(null);
+
+    String updatedBook = objectMapper.writeValueAsString(bookDto);
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.patch("/books/" + bookEntity.getIsbn()).contentType(MediaType.APPLICATION_JSON)
+            .content(updatedBook))
+        .andExpect(
+            MockMvcResultMatchers.status().isNotFound());
+  }
+
+  @Test
+  public void testThatPartialUpdateBookReturnsUpdaterdAutrhorIfExists() throws Exception{
+    BookEntity bookEntity = TestDataUtil.createTestBookA(null);
+    bookService.createUpdatedBook(bookEntity.getIsbn(), bookEntity);
+    BookDto bookDto = TestDataUtil.createTestBookDtoA(null);
+
+    String updatedBook = objectMapper.writeValueAsString(bookDto);
+
+    mockMvc.perform(
+        MockMvcRequestBuilders.patch("/books/" + bookEntity.getIsbn()).contentType(MediaType.APPLICATION_JSON)
+            .content(updatedBook))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.isbn").value(bookEntity.getIsbn()))
+        .andExpect(
+          MockMvcResultMatchers.jsonPath("$.title").value(bookDto.getTitle())
+        ).andExpect(
+          MockMvcResultMatchers.jsonPath("$.author").value(bookDto.getAuthor())
+        );
   }
 
 }
