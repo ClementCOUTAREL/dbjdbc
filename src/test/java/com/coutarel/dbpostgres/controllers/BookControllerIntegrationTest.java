@@ -1,6 +1,7 @@
 package com.coutarel.dbpostgres.controllers;
 
 import org.junit.jupiter.api.Test;
+import org.postgresql.translation.messages_de;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +15,7 @@ import com.coutarel.dbpostgres.TestDataUtil;
 import com.coutarel.dbpostgres.domain.dto.BookDto;
 import com.coutarel.dbpostgres.domain.entities.BookEntity;
 import com.coutarel.dbpostgres.services.BookService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -83,7 +85,7 @@ public class BookControllerIntegrationTest {
   @Test
   public void testThatListBookSuccessfullyReturnsListOfBook() throws Exception {
     BookEntity book = TestDataUtil.createTestBookA(null);
-    bookService.createBook("111", book);
+    bookService.createUpdatedBook("111", book);
 
     mockMvc.perform(
         MockMvcRequestBuilders.get("/books")
@@ -99,7 +101,7 @@ public class BookControllerIntegrationTest {
   @Test
   public void thestThatGetBookByIsbnReturns200StatusWhenBookFound() throws Exception{
     BookEntity book = TestDataUtil.createTestBookA(null);
-    bookService.createBook("L", book);
+    bookService.createUpdatedBook("L", book);
 
     mockMvc.perform(
       MockMvcRequestBuilders.get("/books/L").contentType(MediaType.APPLICATION_JSON)
@@ -111,7 +113,7 @@ public class BookControllerIntegrationTest {
   @Test
   public void thestThatGetBookByIsbnReturns404StatusWhenBookNotFound() throws Exception {
     BookEntity book = TestDataUtil.createTestBookA(null);
-    bookService.createBook("L", book);
+    bookService.createUpdatedBook("L", book);
 
     mockMvc.perform(
         MockMvcRequestBuilders.get("/books/J").contentType(MediaType.APPLICATION_JSON)).andExpect(
@@ -121,7 +123,7 @@ public class BookControllerIntegrationTest {
   @Test
   public void testThatGetBookByIsbnReturnsCorrectBook() throws Exception{
     BookEntity book = TestDataUtil.createTestBookA(null);
-    bookService.createBook("11L",book);
+    bookService.createUpdatedBook("11L",book);
 
     mockMvc.perform(
       MockMvcRequestBuilders.get("/books/11L").contentType(MediaType.APPLICATION_JSON)
@@ -134,6 +136,41 @@ public class BookControllerIntegrationTest {
     )
     .andExpect(
       MockMvcResultMatchers.jsonPath("$.author").value(book.getAuthor())
+    );
+  }
+
+  @Test
+  public void testThatUpdateBookReturnsStatus200WhenBookAlreadyExists() throws Exception{
+    BookEntity bookEntity = TestDataUtil.createTestBookA(null);
+    bookService.createUpdatedBook("1L", bookEntity);
+    BookDto bookDto = TestDataUtil.createTestBookDtoA(null);
+    String bookDtoJson = objectMapper.writeValueAsString(bookDto);
+
+    mockMvc.perform(
+      MockMvcRequestBuilders.put("/books/1L").contentType(MediaType.APPLICATION_JSON).content(bookDtoJson)
+    ).andExpect(
+      MockMvcResultMatchers.status().isOk()
+    );
+  }
+
+  @Test
+  public void testThatUpdateBookReturnsUpdatedExistingBook() throws Exception{
+    BookEntity bookEntity = TestDataUtil.createTestBookA(null);
+    bookService.createUpdatedBook("1L", bookEntity);
+    BookDto bookDto = TestDataUtil.createTestBookDtoA(null);
+    String bookDtoJson = objectMapper.writeValueAsString(bookDto);
+
+    mockMvc.perform(
+      MockMvcRequestBuilders.put("/books/1L").contentType(MediaType.APPLICATION_JSON).content(bookDtoJson)
+    )
+    .andExpect(
+      MockMvcResultMatchers.jsonPath("$.isbn").value(bookEntity.getIsbn())
+    )
+    .andExpect(
+      MockMvcResultMatchers.jsonPath("$.title").value(bookDto.getTitle())
+    )
+    .andExpect(
+      MockMvcResultMatchers.jsonPath("$.author").value(bookDto.getAuthor())
     );
   }
 

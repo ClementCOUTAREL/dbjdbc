@@ -34,13 +34,17 @@ public class BookController {
   }
 
   @PutMapping(path = "/books/{isbn}")
-  public ResponseEntity<BookDto> createBook(
-    @PathVariable("isbn") String isbn,
-    @RequestBody BookDto bookDto) {
-      BookEntity bookEntity = bookMapper.mapFrom(bookDto);
-      BookEntity savedBookEntity = bookService.createBook(isbn, bookEntity);
-      BookDto savedBookDto = bookMapper.mapTo(savedBookEntity);
+  public ResponseEntity<BookDto> createUpdateBook(@PathVariable("isbn") String isbn, @RequestBody BookDto bookDto) {
+    BookEntity bookEntity = bookMapper.mapFrom(bookDto);
+    Boolean bookExists = bookService.isExists(isbn);
+    BookEntity savedBookEntity = bookService.createUpdatedBook(isbn, bookEntity);
+    BookDto savedBookDto = bookMapper.mapTo(savedBookEntity);
+
+    if(bookExists){
+      return new ResponseEntity<>(savedBookDto,HttpStatus.OK);
+    }else{
       return new ResponseEntity<>(savedBookDto,HttpStatus.CREATED);
+    }
   }
   
   @GetMapping("/books/{isbn}")
@@ -54,13 +58,11 @@ public class BookController {
         new ResponseEntity<>(HttpStatus.NOT_FOUND)
       );
   }
-  
 
   @GetMapping(path = "/books")
   public List<BookDto> listBooks() {
       List<BookEntity> books = bookService.findAll();
       return books.stream().map(bookMapper::mapTo).collect(Collectors.toList());
   }
-
 
 }
