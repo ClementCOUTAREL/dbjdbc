@@ -7,9 +7,7 @@ import com.coutarel.dbpostgres.domain.entities.BookEntity;
 import com.coutarel.dbpostgres.mappers.Mapper;
 import com.coutarel.dbpostgres.services.BookService;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
