@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 
@@ -72,6 +73,12 @@ public class BookController {
   public List<BookDto> listBooks() {
       List<BookEntity> books = bookService.findAll();
       return books.stream().map(bookMapper::mapTo).collect(Collectors.toList());
+  }
+
+  @DeleteMapping(path = "/books/{isbn}")
+  public ResponseEntity<?> deleteBook(@PathVariable("isbn") String isbn){
+    bookService.findByIsbn(isbn);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
 }

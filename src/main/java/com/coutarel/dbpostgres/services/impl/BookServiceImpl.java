@@ -46,5 +46,10 @@ public class BookServiceImpl implements BookService {
     bookEntity.setIsbn(isbn);
     return bookRepo.save(bookEntity);
   }
+
+  @Override
+  public void deleteByIsbn(String isbn) {
+   bookRepo.deleteById(isbn);
+  }
   
 }
